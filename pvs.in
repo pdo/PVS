@@ -74,7 +74,6 @@ PVSPATH=@PVSPATH@
 
 # Initialize/set local variables
 batch=
-dotemacs=
 emacs_args=
 emacscmd=
 evalflag=
@@ -150,8 +149,7 @@ do
      -name|-title|-xrm) emacsargs="$emacsargs $1 $2"
                         shift;;
      -q|-no-init-file) emacsargs="$emacsargs $1"
-                       PVSMINUSQ="-q"
-		       dotemacs= ;;
+                       PVSMINUSQ="-q";;
      -E) PVSEVALLOAD="$PVSEVALLOAD $2"
                      shift;;
      -L) PVSEVALLOAD="$PVSEVALLOAD (load \"$2\")"
@@ -231,9 +229,6 @@ else if [ -n "${emacscmd}" ]
      esac
      
      pvsemacsinit="-load ${PVSPATH}/emacs/go-pvs.el ${emacs_args} ${loadafter}"
-     if [ -f ${HOME}/.emacs ]
-     then dotemacs="-l ${HOME}/.emacs"
-     fi
      PVSINEMACS=1
 fi
 
@@ -372,9 +367,9 @@ fi
 # emacsargs is the arguments not otherwise hendled while processing the command line args
 if [ -n "${rawmode}" ] # No Emacs involved - PVSEMACS is not set
 then ${pvsimagepath} ${noinit} ${otherargs}
-elif [ -n "${batch}" ] # Emacs, but no windows
-then ${PVSEMACS} ${batch} ${dotemacs} ${pvsemacsinit} ${emacsargs} ${otherargs} 2>&1
-elif [ -n "${nowin}" -o -z "${DISPLAY}" ]
+elif [ -n "${batch}" ] # Emacs, batch mode
+then ${PVSEMACS} ${batch} ${pvsemacsinit} ${emacsargs} ${otherargs} 2>&1
+elif [ -n "${nowin}" -o -z "${DISPLAY}" ] # Emacs, but no windows
 then ${PVSEMACS} -nw ${pvsemacsinit} ${emacsargs} ${otherargs}
 else
   pvsrun="${PVSEMACS} -name pvs ${pvsemacsinit} ${PVSXINIT} ${emacsargs} ${otherargs}"
